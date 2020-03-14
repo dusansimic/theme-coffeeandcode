@@ -19,7 +19,6 @@ set fish_pager_color_description 555 yellow
 set fish_pager_color_progress cyan
 set fish_pager_color_secondary
 
-set fish_color_host cyan
 set fish_color_user cyan
 
 # Git prompt setup
@@ -34,11 +33,6 @@ set __fish_git_prompt_showuntrackedfiles true
 function fish_prompt --description 'Write out the prompt'
 
   set -l last_status $status
-
-  # Just calculate these once, to save a few cycles when displaying the prompt
-  if not set -q __fish_prompt_hostname
-    set -g __fish_prompt_hostname (hostname|cut -d . -f 1)
-  end
 
   if not set -q __fish_prompt_normal
     set -g __fish_prompt_normal (set_color normal)
@@ -55,13 +49,6 @@ function fish_prompt --description 'Write out the prompt'
     function __fish_repaint_user --on-variable fish_color_user --description "Event handler, repaint when fish_color_user changes"
       if status --is-interactive
         set -e __fish_prompt_user
-        commandline -f repaint 2> /dev/null
-      end
-    end
-
-    function __fish_repaint_host --on-variable fish_color_host --description "Event handler, repaint when fish_color_host changes"
-      if status --is-interactive
-        set -e __fish_prompt_host
         commandline -f repaint 2> /dev/null
       end
     end
@@ -107,10 +94,7 @@ function fish_prompt --description 'Write out the prompt'
   if not set -q __fish_prompt_user
     set -g __fish_prompt_user (set_color $fish_color_user)
   end
-  if not set -q __fish_prompt_host
-    set -g __fish_prompt_host (set_color $fish_color_host)
-  end
 
-  echo -s "$__fish_prompt_user" "$USER" @ "$__fish_prompt_host" "$__fish_prompt_hostname" "$__fish_prompt_normal" ' ' "$__fish_prompt_cwd" (prompt_pwd)
-  echo -s (__fish_git_prompt) "$__fish_prompt_normal" "$delim" ' '
+  echo -s "$__fish_prompt_user" "$USER" "$__fish_prompt_normal" ' ' "$__fish_prompt_cwd" (prompt_pwd) (__fish_git_prompt) 
+  echo -s "$__fish_prompt_normal" "$delim" ' '
 end
